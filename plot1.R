@@ -6,13 +6,16 @@ zip.dir <- "/ExData"
 download.file(file.url, file.dest)
 unzip(file.dest, exdir = zip.dir)
 HPC <- fread(paste(zip.dir, dir(zip.dir)[[1]], sep = "/"))
-HPC$Datetime <- paste(HPC$Date, HPC$Time) %>%
-  strptime(format = "%d/%m/%Y %T")
 HPC$Date <- HPC[, Date] %>%
   as.Date(format = "%d/%m/%Y")
 HPC <- HPC[Date == "2007-02-01" | Date == "2007-02-02"]
+HPC$Datetimes <- paste(HPC$Date, HPC$Time) %>%
+  as.POSIXct()
 HPC$Global_active_power<- as.numeric(HPC[,Global_active_power])
+HPC$Sub_metering_1 <- as.numeric(HPC$Sub_metering_1)
+HPC$Sub_metering_2 <- as.numeric(HPC$Sub_metering_2)
+HPC$Sub_metering_3 <- as.numeric(HPC$Sub_metering_3)
 
-
-#plot1
-hist(HPC[,Global_active_power], col = "red")
+png(filename = "plot1.png", width = 480, height = 480)
+hist(HPC$Global_active_power, col = "red", xlab = "Global Active Power (kilowatts)")
+dev.off()
